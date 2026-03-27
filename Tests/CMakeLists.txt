@@ -24,3 +24,21 @@ find_package(Boost 0 CONFIG REQUIRED COMPONENTS filesystem)
 # means we'll have all their targets. Also, the targets that we reference in `target_link_libraries` commands don't
 # even need to exist yet because CMake only validates the existence of targets at the end of the entire
 # configuration process.
+
+add_executable(${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata)
+target_compile_features(${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata PUBLIC cxx_std_20)
+target_sources(${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/Source/GetPathToMeddydata.cpp")
+target_link_libraries(${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata
+  PRIVATE
+    ${MY_BASE_PROJECT_NAME_NAMESPACE}::${MY_BASE_PROJECT_NAME_LEAFNAME}::Static
+    Boost::filesystem
+  )
+
+add_test(
+  NAME ${MY_BASE_PROJECT_NAME_NAMESPACE}.${MY_BASE_PROJECT_NAME_LEAFNAME}.GetPathToMeddydata
+  COMMAND ${CMAKE_COMMAND}
+    "-DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}"
+    "-DMY_TEST_EXECUTABLE_PATH=$<TARGET_FILE:${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata>"
+    "-DMY_TEST_WORKING_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Scripts/GetPathToMeddydata.cmake"
+  )
