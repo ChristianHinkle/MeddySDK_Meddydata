@@ -1,0 +1,74 @@
+{
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 4,
+        "minor": 0,
+        "patch": 0
+    },
+    "$comment": [
+        "Copyright (c) 2023-2025 Christian Hinkle, Brian Hinkle.",
+        "Includes: We have includes of utility files search from the `${sourceDir}` (which is the top-level project's directory), so that it's the responsibility of the top-level project to provide these files. We do this to avoid multiple includes to duplicate files. CMake throws an error if a preset is defined twice with the same name, but it does allow duplicate includes to the same file."
+    ],
+    "include": [
+        "${sourceDir}/CMakePresets_General/CMakePresets.json"
+    ],
+    "testPresets": [
+        {
+            "name": "meddysdk-meddydata-base",
+            "hidden": true,
+            "filter": {
+                "include": {
+                    "name": "MeddySDK.Meddydata."
+                }
+            }
+        },
+        {
+            "name": "meddysdk-meddydata-win-debug",
+            "displayName": "MeddySDK.Meddydata - Windows Debug",
+            "inherits": [
+                "meddysdk-meddydata-base",
+                "win-debug"
+            ]
+        },
+        {
+            "name": "meddysdk-meddydata-win-release",
+            "displayName": "MeddySDK.Meddydata - Windows Release",
+            "inherits": [
+                "meddysdk-meddydata-base",
+                "win-release"
+            ]
+        },
+        {
+            "name": "meddysdk-meddydata-linux-debug",
+            "displayName": "MeddySDK.Meddydata - Linux Debug",
+            "inherits": [
+                "meddysdk-meddydata-base",
+                "linux-debug"
+            ]
+        },
+        {
+            "name": "meddysdk-meddydata-linux-release",
+            "displayName": "MeddySDK.Meddydata - Linux Release",
+            "inherits": [
+                "meddysdk-meddydata-base",
+                "linux-release"
+            ]
+        },
+        {
+            "name": "meddysdk-meddydata-macos-debug",
+            "displayName": "MeddySDK.Meddydata - macOS Debug",
+            "inherits": [
+                "meddysdk-meddydata-base",
+                "macos-debug"
+            ]
+        },
+        {
+            "name": "meddysdk-meddydata-macos-release",
+            "displayName": "MeddySDK.Meddydata - macOS Release",
+            "inherits": [
+                "meddysdk-meddydata-base",
+                "macos-release"
+            ]
+        }
+    ]
+}
