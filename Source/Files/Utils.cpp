@@ -9,6 +9,7 @@
 #include <MeddySDK/Meddyproject/Utils.h>
 #include <iostream>
 #include <MeddySDK/Meddyproject/FilesystemUtils.h>
+#include <CppUtils/Core/Filesystem.h>
 
 CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_GetMeddydata> MeddySDK::GetMeddydata(boost::filesystem::path&& sourceFilesystemPath)
 {
@@ -95,6 +96,16 @@ boost::filesystem::path MeddySDK::MeddydataRootDirToDotMeddyprojectDir(boost::fi
     return std::move(meddydataRootDir).parent_path();
 }
 
+boost::filesystem::path MeddySDK::MeddydataPathToMeddydataManifestPath(boost::filesystem::path&& meddydataPath)
+{
+    return std::move(meddydataPath).append(MeddydataManifestFilename);
+}
+
+boost::filesystem::path MeddySDK::MeddydataManifestPathToMeddydataPath(boost::filesystem::path&& manifestMeddydataPath)
+{
+    return std::move(manifestMeddydataPath).parent_path();
+}
+
 bool MeddySDK::IsMeddydataRootDir(const boost::filesystem::path& filesystemPath)
 {
     Result_QueryWhetherPathIsMeddydataRootDir result = MeddySDK::QueryWhetherPathIsMeddydataRootDir(filesystemPath);
@@ -103,7 +114,7 @@ bool MeddySDK::IsMeddydataRootDir(const boost::filesystem::path& filesystemPath)
 
 MeddySDK::Result_QueryWhetherPathIsMeddydataRootDir MeddySDK::QueryWhetherPathIsMeddydataRootDir(const boost::filesystem::path& filesystemPath)
 {
-    if (MeddySDK::IsPathEqualToString(filesystemPath.filename(), MeddydataRootDirString))
+    if (!MeddySDK::IsPathEqualToString(filesystemPath.filename(), MeddydataRootDirString))
     {
         return Result_QueryWhetherPathIsMeddydataRootDir::No_LeafNameIsNotEqualToMeddydata;
     }
@@ -141,7 +152,7 @@ MeddySDK::Result_QueryWhetherPathIsValidMeddydata MeddySDK::QueryWhetherPathIsVa
 }
 
 CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherPathIsValidMeddydata> MeddySDK::GetSourceFilePathFromMeddydataPath(
-    boost::filesystem::path&& meddydataPath)
+    const boost::filesystem::path& meddydataPath)
 {
     Result_QueryWhetherPathIsValidMeddydata isValidMeddydataResult = QueryWhetherPathIsValidMeddydata(boost::filesystem::path{meddydataPath});
     if (isValidMeddydataResult != Result_QueryWhetherPathIsValidMeddydata::Yes)
@@ -151,7 +162,7 @@ CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherP
     }
 
     // Traverse up the parent directories until we see that ".meddyproject/meddydata" exists.
-    for (boost::filesystem::path currentDir = std::move(meddydataPath); currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
+    for (boost::filesystem::path currentDir = meddydataPath; currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
     {
         if (IsMeddydataRootDir(currentDir))
         {
@@ -168,14 +179,66 @@ CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherP
     return Result_QueryWhetherPathIsValidMeddydata{};
 }
 
-MeddySDK::Result_TryAddMeddydata MeddySDK::TryAddMeddydata(boost::filesystem::path&& sourceFilesystemPath)
+CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_TryAddMeddydata> MeddySDK::TryAddMeddydata(boost::filesystem::path&& sourceFilesystemPath)
 {
-    // TODO: Implement.
-    std::abort();
+    CppUtils::ExpectedResult meddyprojectResult = MeddySDK::GetOuterMeddyproject(boost::filesystem::path{sourceFilesystemPath});
+    if (meddyprojectResult.IsError())
+    {
+        switch (meddyprojectResult.GetError())
+        {
+        case MeddySDK::Error_GetOuterDotMeddyprojectPath::PathDoesntExist:
+            return Error_TryAddMeddydata::SourcePathDoesNotExist;
+        case MeddySDK::Error_GetOuterDotMeddyprojectPath::NoDotMeddyprojectFound:
+            return Error_TryAddMeddydata::CouldntLocateOuterMeddyproject;
+        }
+
+        assert(false); // Hits if there is an error returned that we don't have a case for in here.
+        return Error_TryAddMeddydata{};
+    }
+
+    MeddySDK::Meddyproject meddyproject = std::move(meddyprojectResult).GetValue();
+
+    boost::filesystem::path pathToSourceFileRelative = sourceFilesystemPath.lexically_relative(meddyproject.GetRootPath());
+
+    CppUtils::ExpectedResult meddydataResult = AddMeddydata(std::move(meddyproject), std::move(pathToSourceFileRelative));
+    if (meddydataResult.IsError())
+    {
+        switch (meddydataResult.GetError())
+        {
+        case MeddySDK::Error_AddMeddydata::FilesystemFailedToCreateMeddydata:
+            return Error_TryAddMeddydata::FilesystemFailedToCreateMeddydata;
+        case MeddySDK::Error_AddMeddydata::FilesystemFailedToCreateManifestFile:
+            return Error_TryAddMeddydata::FilesystemFailedToCreateManifestFile;
+        }
+
+        assert(false); // Hits if there is an error returned that we don't have a case for in here.
+        return Error_TryAddMeddydata{};
+    }
+
+    return std::move(meddydataResult).GetValue();
 }
 
-MeddySDK::Result_AddMeddydata MeddySDK::AddMeddydata(boost::filesystem::path&& sourceFilesystemPath)
+CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> MeddySDK::AddMeddydata(
+    MeddySDK::Meddyproject&& meddyproject,
+    boost::filesystem::path&& sourcePathRelative)
 {
-    // TODO: Implement.
-    std::abort();
+    boost::filesystem::path pathToMeddydata = GetPathToMeddydata(std::move(meddyproject).GetRootPath(), std::move(sourcePathRelative));
+
+    // TODO: Handle specifically case where directory already exists.
+    const bool didCreateMeddydata = boost::filesystem::create_directories(pathToMeddydata);
+    if (!didCreateMeddydata)
+    {
+        return Error_AddMeddydata::FilesystemFailedToCreateMeddydata;
+    }
+
+    // TODO: Handle specifically case where manifest file already exists.
+    boost::filesystem::path manifestFilePath = MeddydataPathToMeddydataManifestPath(std::move(pathToMeddydata));
+
+    const bool didCreateFile = CppUtils::TouchNewFile(manifestFilePath.native());
+    if (!didCreateFile)
+    {
+        return Error_AddMeddydata::FilesystemFailedToCreateManifestFile;
+    }
+
+    return MeddySDK::Meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath))};
 }

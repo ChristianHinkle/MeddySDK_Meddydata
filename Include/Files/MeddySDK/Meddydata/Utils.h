@@ -6,16 +6,22 @@
 #include <boost/filesystem/path.hpp>
 #include <CppUtils/Core/ExpectedResult.h>
 #include <MeddySDK/Meddydata/Meddydata.h>
+#include <MeddySDK/Meddyproject/Meddyproject.h>
 
 #define MEDDYSDK_MEDDYDATA_ROOT_DIR_STRING_LITERAL "meddydata"
 
+#define MEDDYSDK_MEDDYDATA_MANIFEST_FILENAME_STRING_LITERAL "metadata.json"
+
 /**
- * @Christian: TODO: [todo] Most of this code is currently untested! Write tests and see if it works!
+ *
  */
 namespace MeddySDK
 {
     constexpr std::string_view MeddydataRootDirString =
         MEDDYSDK_MEDDYDATA_ROOT_DIR_STRING_LITERAL;
+
+    constexpr std::string_view MeddydataManifestFilename =
+        MEDDYSDK_MEDDYDATA_MANIFEST_FILENAME_STRING_LITERAL;
 
     enum class Error_GetMeddydata : unsigned char
     {
@@ -43,6 +49,10 @@ namespace MeddySDK
 
     MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataRootDirToDotMeddyprojectDir(boost::filesystem::path&& meddydataRootDir);
 
+    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataPathToMeddydataManifestPath(boost::filesystem::path&& meddydataPath);
+
+    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataManifestPathToMeddydataPath(boost::filesystem::path&& manifestMeddydataPath);
+
     enum class Result_QueryWhetherPathIsMeddydataRootDir : unsigned char
     {
         Yes,
@@ -64,17 +74,25 @@ namespace MeddySDK
     MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsValidMeddydata QueryWhetherPathIsValidMeddydata(boost::filesystem::path&& meddydataPath);
 
     MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<boost::filesystem::path, Result_QueryWhetherPathIsValidMeddydata> GetSourceFilePathFromMeddydataPath(
-        boost::filesystem::path&& meddydataPath);
+        const boost::filesystem::path& meddydataPath);
 
-    enum class Result_TryAddMeddydata : unsigned char
+    enum class Error_TryAddMeddydata : unsigned char
     {
+        SourcePathDoesNotExist,
+        CouldntLocateOuterMeddyproject,
+        FilesystemFailedToCreateMeddydata,
+        FilesystemFailedToCreateManifestFile,
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT Result_TryAddMeddydata TryAddMeddydata(boost::filesystem::path&& sourceFilesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_TryAddMeddydata> TryAddMeddydata(boost::filesystem::path&& sourceFilesystemPath);
 
-    enum class Result_AddMeddydata : unsigned char
+    enum class Error_AddMeddydata : unsigned char
     {
+        FilesystemFailedToCreateMeddydata,
+        FilesystemFailedToCreateManifestFile,
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT Result_AddMeddydata AddMeddydata(boost::filesystem::path&& sourceFilesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_AddMeddydata> AddMeddydata(
+        MeddySDK::Meddyproject&& meddyproject,
+        boost::filesystem::path&& sourcePathRelative);
 }

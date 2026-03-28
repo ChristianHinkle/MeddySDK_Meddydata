@@ -17,7 +17,7 @@ int main(int argc, char** argv)
 {
     if (argc != 3)
     {
-        std::cout << "Bad arguments given. Required command synopsis: `<command-name> <new-project-directory-path> <expected-result>`." << '\n';
+        std::cout << "Bad arguments given. Required command synopsis: `<command-name> <input-path> <expected-result>`." << '\n';
         std::cout.flush();
         return ErrorCodes::IncorrectNumberOfArguments;
     }
