@@ -224,20 +224,43 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
 {
     boost::filesystem::path pathToMeddydata = GetPathToMeddydata(std::move(meddyproject).GetRootPath(), std::move(sourcePathRelative));
 
-    // TODO: Handle specifically case where directory already exists.
-    const bool didCreateMeddydata = boost::filesystem::create_directories(pathToMeddydata);
-    if (!didCreateMeddydata)
+    if (boost::filesystem::exists(pathToMeddydata) && !boost::filesystem::is_directory(pathToMeddydata))
     {
+        // There is a file conflicting with the same name as the directory we wanted to create. TODO: We should traverse up the parent directories and check for conflicting files.
         return Error_AddMeddydata::FilesystemFailedToCreateMeddydata;
     }
 
-    // TODO: Handle specifically case where manifest file already exists.
     boost::filesystem::path manifestFilePath = MeddydataPathToMeddydataManifestPath(std::move(pathToMeddydata));
 
-    const bool didCreateFile = CppUtils::TouchNewFile(manifestFilePath.native());
-    if (!didCreateFile)
+    if (boost::filesystem::exists(manifestFilePath) && boost::filesystem::is_directory(manifestFilePath))
     {
+        // Return an error if there was a directory conflicting with the file name that we wanted to create.
         return Error_AddMeddydata::FilesystemFailedToCreateManifestFile;
+    }
+
+    pathToMeddydata = MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath));
+
+    // No seriously conflicting files, proceed with creating the meddydata files.
+
+    if (!boost::filesystem::exists(pathToMeddydata))
+    {
+        const bool didCreateMeddydata = boost::filesystem::create_directories(pathToMeddydata);
+        if (!didCreateMeddydata)
+        {
+            // Note: This could happen if a file exists with a conflicting name with one of the directories we're trying to create.
+            return Error_AddMeddydata::FilesystemFailedToCreateMeddydata;
+        }
+    }
+
+    manifestFilePath = MeddydataPathToMeddydataManifestPath(std::move(pathToMeddydata));
+
+    if (!boost::filesystem::exists(manifestFilePath))
+    {
+        const bool didCreateFile = CppUtils::TouchNewFile(manifestFilePath.native());
+        if (!didCreateFile)
+        {
+            return Error_AddMeddydata::FilesystemFailedToCreateManifestFile;
+        }
     }
 
     return MeddySDK::Meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath))};
