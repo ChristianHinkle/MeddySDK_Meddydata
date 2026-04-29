@@ -8,6 +8,8 @@
 #include <MeddySDK/Meddydata/Meddydata.h>
 #include <MeddySDK/Meddyproject/Meddyproject.h>
 
+// @Christian: TODO: Change the meddydata paths as planned in the design, which avoids conflicting files and directories.
+
 #define MEDDYSDK_MEDDYDATA_ROOT_DIR_STRING_LITERAL "meddydata"
 
 #define MEDDYSDK_MEDDYDATA_MANIFEST_FILENAME_STRING_LITERAL "metadata.json"

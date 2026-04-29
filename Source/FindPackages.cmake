@@ -1,5 +1,7 @@
 # Copyright (c) 2023-2025 Christian Hinkle, Brian Hinkle.
 
+find_package(RapidJsonCmakeInterface CONFIG REQUIRED)
+
 find_package(MeddySDK_Meddyproject CONFIG REQUIRED COMPONENTS Static)
 
 find_package(Boost CONFIG REQUIRED COMPONENTS filesystem)

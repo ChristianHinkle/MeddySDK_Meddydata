@@ -11,6 +11,8 @@ SET(MY_BASE_PROJECT_NAME_LEAFNAME "Meddydata")
 
 include(CMakeFindDependencyMacro)
 
+find_dependency(RapidJsonCmakeInterface CONFIG)
+
 find_dependency(MeddySDK_Meddyproject CONFIG COMPONENTS Include)
 find_dependency(MeddySDK_Meddyproject CONFIG COMPONENTS Static)
 

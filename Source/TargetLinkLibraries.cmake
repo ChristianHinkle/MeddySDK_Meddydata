@@ -5,6 +5,8 @@ set(TARGETLINKLIBRARIES_CMAKE_RESULT
   # Add dependencies to other targets. For imported targets, it's important to only depend on them if we
   # are BUILD_LOCAL_INTERFACE, because we don't want them to get mixed into our export.
   INTERFACE
+    $<BUILD_LOCAL_INTERFACE:::RapidJsonCmakeInterface>
+
     $<BUILD_LOCAL_INTERFACE:MeddySDK::Meddyproject::Static>
 
     $<BUILD_LOCAL_INTERFACE:Boost::filesystem>
