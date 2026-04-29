@@ -1,6 +1,7 @@
 // Copyright (c) 2023-2025 Christian Hinkle, Brian Hinkle.
 
 #include <MeddySDK/Meddydata/Utils.h>
+#include <MeddySDK/Meddydata/Utils.inl>
 
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -259,24 +260,31 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
 
     manifestFilePath = MeddydataPathToMeddydataManifestPath(std::move(pathToMeddydata));
 
-    if (!boost::filesystem::exists(manifestFilePath))
+    // If it already exists, just use it without touching its contents.
+    if (boost::filesystem::exists(manifestFilePath))
     {
-        const bool didCreateFile = CppUtils::TouchNewFile(manifestFilePath.native());
-        if (!didCreateFile)
-        {
-            return Error_AddMeddydata::FilesystemFailedToCreateManifestFile;
-        }
+        return MeddySDK::Meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath))};
+    }
 
-        // Write the default json contents to the file.
+    // Create the file.
+    const bool didCreateFile = CppUtils::TouchNewFile(manifestFilePath.native());
+    if (!didCreateFile)
+    {
+        return Error_AddMeddydata::FilesystemFailedToCreateManifestFile;
+    }
 
-        constexpr auto jsonString =
-R"(
-{
-}
-)";
+    MeddySDK::Meddydata meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath))};
+
+    // Populate the json file.
+    {
+        // Write the default json contents.
 
         rapidjson::Document jsonDocument{};
-        jsonDocument.Parse(jsonString);
+        jsonDocument.SetObject();
+
+        AppendNewMetadataJson(meddydata, jsonDocument);
+
+        // Serialize this json document to the file.
 
         CppUtils::CharBufferString manifestFilePathConverted = CppUtils::ConstructCharacterBufferFromString<char, MeddySDK::MaxFilenameLength>(
             CppUtils::StdPathStringView{manifestFilePath.native()});
@@ -295,5 +303,5 @@ R"(
         std::fclose(manifestFilePtr);
     }
 
-    return MeddySDK::Meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath))};
+    return meddydata;
 }

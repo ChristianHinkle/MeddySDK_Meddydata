@@ -14,6 +14,12 @@
 
 #define MEDDYSDK_MEDDYDATA_MANIFEST_FILENAME_STRING_LITERAL "metadata.json"
 
+namespace rapidjson
+{
+    template <typename Encoding, typename Allocator, typename StackAllocator>
+    class GenericDocument;
+}
+
 /**
  *
  */
@@ -97,4 +103,7 @@ namespace MeddySDK
     MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_AddMeddydata> AddMeddydata(
         MeddySDK::Meddyproject&& meddyproject,
         boost::filesystem::path&& sourcePathRelative);
+
+    template <class Encoding, class Allocator, class StackAllocator>
+    void AppendNewMetadataJson(const MeddySDK::Meddydata& meddydata, rapidjson::GenericDocument<Encoding, Allocator, StackAllocator>& metadataJsonDocument);
 }
