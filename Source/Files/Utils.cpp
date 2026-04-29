@@ -11,9 +11,10 @@
 #include <MeddySDK/Meddyproject/FilesystemUtils.h>
 #include <CppUtils/Core/Filesystem.h>
 #include <rapidjson/document.h>
-#include <rapidjson/writer.h>
+#include <rapidjson/prettywriter.h>
 #include <rapidjson/filewritestream.h>
 #include <CppUtils/Misc/String.h>
+#include <MeddySDK/Meddyproject/Json.h>
 
 CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_GetMeddydata> MeddySDK::GetMeddydata(boost::filesystem::path&& sourceFilesystemPath)
 {
@@ -286,7 +287,9 @@ R"(
         char jsonWriteBuffer[jsonWriteBufferSize];
         rapidjson::FileWriteStream jsonFileWriteStream{manifestFilePtr, jsonWriteBuffer, jsonWriteBufferSize};
 
-        rapidjson::Writer<rapidjson::FileWriteStream> jsonWriter{jsonFileWriteStream};
+        rapidjson::PrettyWriter<rapidjson::FileWriteStream> jsonWriter{jsonFileWriteStream};
+        MeddySDK::ApplyPrettyJsonDefaults(jsonWriter);
+
         jsonDocument.Accept(jsonWriter);
 
         std::fclose(manifestFilePtr);
