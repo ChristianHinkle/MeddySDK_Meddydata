@@ -10,12 +10,9 @@
 #include <MeddySDK/Meddyproject/Utils.h>
 #include <iostream>
 #include <MeddySDK/Meddyproject/FilesystemUtils.h>
-#include <CppUtils/Core/Filesystem.h>
 #include <rapidjson/document.h>
-#include <rapidjson/prettywriter.h>
-#include <rapidjson/filewritestream.h>
-#include <CppUtils/Misc/String.h>
 #include <MeddySDK/Meddyproject/Json.h>
+#include <MeddySDK/Meddyproject/Json.inl>
 
 CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_GetMeddydata> MeddySDK::GetMeddydata(boost::filesystem::path&& sourceFilesystemPath)
 {
@@ -278,34 +275,13 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
     // Populate the json file.
     {
         // Write the default json contents.
-
         rapidjson::Document jsonDocument{};
         jsonDocument.SetObject();
-
         AppendNewMetadataJson(meddydata, jsonDocument);
 
         // Serialize this json document to the file.
-
-        CppUtils::CharBufferString manifestFilePathConverted = CppUtils::ConstructCharacterBufferFromString<char, MeddySDK::MaxFilenameLength>(
-            CppUtils::StdPathStringView{manifestFilePath.native()});
-
-        std::FILE* manifestFilePtr = std::fopen(manifestFilePathConverted.ToStringView().data(), "wb");
-        assert(manifestFilePtr);
-
-        constexpr std::size_t jsonWriteBufferSize = 65536u;
-        char jsonWriteBuffer[jsonWriteBufferSize];
-        rapidjson::FileWriteStream jsonFileWriteStream{manifestFilePtr, jsonWriteBuffer, jsonWriteBufferSize};
-
-        rapidjson::PrettyWriter<rapidjson::FileWriteStream> jsonWriter{jsonFileWriteStream};
-        MeddySDK::ApplyPrettyJsonDefaults(jsonWriter);
-
-        jsonDocument.Accept(jsonWriter);
-
-        // Write a newline at end of file.
-        jsonFileWriteStream.Put('\n');
-        jsonFileWriteStream.Flush();
-
-        std::fclose(manifestFilePtr);
+        const bool didSaveToFile = MeddySDK::SaveJsonDocumentToFile(CppUtils::StdPathStringView{manifestFilePath.native()}, jsonDocument);
+        assert(didSaveToFile);
     }
 
     return meddydata;
