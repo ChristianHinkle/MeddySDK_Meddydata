@@ -8,9 +8,9 @@
 #include <MeddySDK/Meddydata/Meddydata.h>
 #include <MeddySDK/Meddyproject/Meddyproject.h>
 
-// @Christian: TODO: Change the meddydata paths as planned in the design, which avoids conflicting files and directories.
+#define MEDDYSDK_FILE_TREE_DIR_STRING_LITERAL "ftree"
 
-#define MEDDYSDK_MEDDYDATA_ROOT_DIR_STRING_LITERAL "meddydata"
+#define MEDDYSDK_MEDDYDATA_DIR_STRING_LITERAL "_meddydata"
 
 #define MEDDYSDK_MEDDYDATA_MANIFEST_FILENAME_STRING_LITERAL "metadata.json"
 
@@ -25,8 +25,11 @@ namespace rapidjson
  */
 namespace MeddySDK
 {
-    constexpr std::string_view MeddydataRootDirString =
-        MEDDYSDK_MEDDYDATA_ROOT_DIR_STRING_LITERAL;
+    constexpr std::string_view FileTreeDirString =
+        MEDDYSDK_FILE_TREE_DIR_STRING_LITERAL;
+
+    constexpr std::string_view MeddydataDirString =
+        MEDDYSDK_MEDDYDATA_DIR_STRING_LITERAL;
 
     constexpr std::string_view MeddydataManifestFilename =
         MEDDYSDK_MEDDYDATA_MANIFEST_FILENAME_STRING_LITERAL;
@@ -53,30 +56,30 @@ namespace MeddySDK
     MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path GetPathToMeddydata(
         boost::filesystem::path&& meddyprojectRootPath, boost::filesystem::path&& sourcePathRelative);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path DotMeddyprojectDirToMeddydataRootDir(boost::filesystem::path&& dotMeddyprojectDir);
+    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path DotMeddyprojectDirToFileTreeDir(boost::filesystem::path&& dotMeddyprojectDir);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataRootDirToDotMeddyprojectDir(boost::filesystem::path&& meddydataRootDir);
+    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path FileTreeDirToDotMeddyprojectDir(boost::filesystem::path&& fileTreeDir);
 
     MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataPathToMeddydataManifestPath(boost::filesystem::path&& meddydataPath);
 
     MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataManifestPathToMeddydataPath(boost::filesystem::path&& manifestMeddydataPath);
 
-    enum class Result_QueryWhetherPathIsMeddydataRootDir : unsigned char
+    enum class Result_QueryWhetherPathIsFileTreeDir : unsigned char
     {
         Yes,
-        No_LeafNameIsNotEqualToMeddydata,
+        No_LeafNameDoesNotMatch,
         No_NotImmediateChildOfDotMeddyproject
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT bool IsMeddydataRootDir(const boost::filesystem::path& filesystemPath);
-    MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsMeddydataRootDir QueryWhetherPathIsMeddydataRootDir(const boost::filesystem::path& filesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT bool IsFileTreeDir(const boost::filesystem::path& filesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsFileTreeDir QueryWhetherPathIsFileTreeDir(const boost::filesystem::path& filesystemPath);
 
     enum class Result_QueryWhetherPathIsValidMeddydata : unsigned char
     {
         Yes,
         No_DoesntExist,
         No_NotDirectory,
-        No_NotUnderMeddyprojectMeddydataRootDir
+        No_NotUnderMeddyprojectFileTreeDir
     };
 
     MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsValidMeddydata QueryWhetherPathIsValidMeddydata(boost::filesystem::path&& meddydataPath);

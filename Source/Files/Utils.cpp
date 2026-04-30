@@ -84,19 +84,21 @@ boost::filesystem::path MeddySDK::GetPathToMeddydata(
 
     boost::filesystem::path dotMeddyprojectPath = MeddySDK::ProjectRootToDotMeddyprojectPath(std::move(meddyprojectRootPath));
 
-    boost::filesystem::path meddydataRootDirPath = DotMeddyprojectDirToMeddydataRootDir(std::move(dotMeddyprojectPath));
+    boost::filesystem::path fileTreeDirPath = DotMeddyprojectDirToFileTreeDir(std::move(dotMeddyprojectPath));
 
-    return std::move(meddydataRootDirPath).append(std::move(sourcePathRelative));
+    boost::filesystem::path sourcePathRelativeToFileTree = std::move(fileTreeDirPath.append(std::move(sourcePathRelative)));
+
+    return std::move(sourcePathRelativeToFileTree.append(MeddydataDirString));
 }
 
-boost::filesystem::path MeddySDK::DotMeddyprojectDirToMeddydataRootDir(boost::filesystem::path&& dotMeddyprojectDir)
+boost::filesystem::path MeddySDK::DotMeddyprojectDirToFileTreeDir(boost::filesystem::path&& dotMeddyprojectDir)
 {
-    return std::move(dotMeddyprojectDir).append(MeddydataRootDirString);
+    return std::move(dotMeddyprojectDir).append(FileTreeDirString);
 }
 
-boost::filesystem::path MeddySDK::MeddydataRootDirToDotMeddyprojectDir(boost::filesystem::path&& meddydataRootDir)
+boost::filesystem::path MeddySDK::FileTreeDirToDotMeddyprojectDir(boost::filesystem::path&& fileTreeDir)
 {
-    return std::move(meddydataRootDir).parent_path();
+    return std::move(fileTreeDir).parent_path();
 }
 
 boost::filesystem::path MeddySDK::MeddydataPathToMeddydataManifestPath(boost::filesystem::path&& meddydataPath)
@@ -109,25 +111,25 @@ boost::filesystem::path MeddySDK::MeddydataManifestPathToMeddydataPath(boost::fi
     return std::move(manifestMeddydataPath).parent_path();
 }
 
-bool MeddySDK::IsMeddydataRootDir(const boost::filesystem::path& filesystemPath)
+bool MeddySDK::IsFileTreeDir(const boost::filesystem::path& filesystemPath)
 {
-    Result_QueryWhetherPathIsMeddydataRootDir result = MeddySDK::QueryWhetherPathIsMeddydataRootDir(filesystemPath);
-    return result == Result_QueryWhetherPathIsMeddydataRootDir::Yes;
+    Result_QueryWhetherPathIsFileTreeDir result = MeddySDK::QueryWhetherPathIsFileTreeDir(filesystemPath);
+    return result == Result_QueryWhetherPathIsFileTreeDir::Yes;
 }
 
-MeddySDK::Result_QueryWhetherPathIsMeddydataRootDir MeddySDK::QueryWhetherPathIsMeddydataRootDir(const boost::filesystem::path& filesystemPath)
+MeddySDK::Result_QueryWhetherPathIsFileTreeDir MeddySDK::QueryWhetherPathIsFileTreeDir(const boost::filesystem::path& filesystemPath)
 {
-    if (!MeddySDK::IsPathEqualToString(filesystemPath.filename(), MeddydataRootDirString))
+    if (!MeddySDK::IsPathEqualToString(filesystemPath.filename(), FileTreeDirString))
     {
-        return Result_QueryWhetherPathIsMeddydataRootDir::No_LeafNameIsNotEqualToMeddydata;
+        return Result_QueryWhetherPathIsFileTreeDir::No_LeafNameDoesNotMatch;
     }
 
     if (!MeddySDK::IsDotMeddyprojectPath(filesystemPath.parent_path()))
     {
-        return Result_QueryWhetherPathIsMeddydataRootDir::No_NotImmediateChildOfDotMeddyproject;
+        return Result_QueryWhetherPathIsFileTreeDir::No_NotImmediateChildOfDotMeddyproject;
     }
 
-    return Result_QueryWhetherPathIsMeddydataRootDir::Yes;
+    return Result_QueryWhetherPathIsFileTreeDir::Yes;
 }
 
 MeddySDK::Result_QueryWhetherPathIsValidMeddydata MeddySDK::QueryWhetherPathIsValidMeddydata(boost::filesystem::path&& meddydataPath)
@@ -142,16 +144,16 @@ MeddySDK::Result_QueryWhetherPathIsValidMeddydata MeddySDK::QueryWhetherPathIsVa
         return Result_QueryWhetherPathIsValidMeddydata::No_NotDirectory;
     }
 
-    // Traverse up the parent directories until we see that ".meddyproject/meddydata" exists.
+    // Traverse up the parent directories until we see that ".meddyproject/ftree" exists.
     for (boost::filesystem::path currentDir = std::move(meddydataPath); currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
     {
-        if (IsMeddydataRootDir(currentDir))
+        if (IsFileTreeDir(currentDir))
         {
             return Result_QueryWhetherPathIsValidMeddydata::Yes;
         }
     }
 
-    return Result_QueryWhetherPathIsValidMeddydata::No_NotUnderMeddyprojectMeddydataRootDir;
+    return Result_QueryWhetherPathIsValidMeddydata::No_NotUnderMeddyprojectFileTreeDir;
 }
 
 CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherPathIsValidMeddydata> MeddySDK::GetSourceFilePathFromMeddydataPath(
@@ -164,14 +166,16 @@ CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherP
         return isValidMeddydataResult;
     }
 
-    // Traverse up the parent directories until we see that ".meddyproject/meddydata" exists.
+    // Traverse up the parent directories until we see that ".meddyproject/ftree" exists.
     for (boost::filesystem::path currentDir = meddydataPath; currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
     {
-        if (IsMeddydataRootDir(currentDir))
+        if (IsFileTreeDir(currentDir))
         {
-            boost::filesystem::path sourceFilePathRelative = meddydataPath.lexically_relative(currentDir);
+            // We know that the meddydata path's leaf is "_meddydata". Get remove that part of it, and make it relative to the meddyproject's root dir.
+            assert(MeddySDK::IsPathEqualToString(meddydataPath.filename(), MeddydataDirString));
+            boost::filesystem::path sourceFilePathRelative = meddydataPath.parent_path().lexically_relative(currentDir);
 
-            boost::filesystem::path dotMeddyprojectDir = MeddydataRootDirToDotMeddyprojectDir(std::move(currentDir));
+            boost::filesystem::path dotMeddyprojectDir = FileTreeDirToDotMeddyprojectDir(std::move(currentDir));
             boost::filesystem::path meddyprojectRootDir = MeddySDK::DotMeddyprojectToProjectRootPath(std::move(dotMeddyprojectDir));
 
             return std::move(std::move(meddyprojectRootDir).append(sourceFilePathRelative));

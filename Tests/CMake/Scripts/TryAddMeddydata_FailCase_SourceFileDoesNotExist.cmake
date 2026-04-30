@@ -47,7 +47,7 @@ endif()
 
 # Perform the rest of the test, verifying that the files exist.
 
-if(EXISTS "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/meddydata/HereIsAnExampleTextFileNextToTheProject.txt")
+if(EXISTS "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/HereIsAnExampleTextFileNextToTheProject.txt/_meddydata")
   message("Failed. What? A meddydata directory was somehow created for a file outside the meddyproject.")
   cmake_language(EXIT 4)
 endif()

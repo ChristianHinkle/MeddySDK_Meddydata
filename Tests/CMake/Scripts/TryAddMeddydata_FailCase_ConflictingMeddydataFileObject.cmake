@@ -29,9 +29,10 @@ file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/My
 file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/MyOtherCoolTextFiles/Hey.txt")
 
 # Create a conflicting file object with where it's going to try creating the meddydata.
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/meddydata")
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/meddydata/MyOtherCoolTextFiles")
-file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/meddydata/MyOtherCoolTextFiles/Hey.txt")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles/Hey.txt")
+file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles/Hey.txt/_meddydata")
 
 # Invoke the c++ test program.
 execute_process(
