@@ -18,8 +18,8 @@ file(REMOVE_RECURSE "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST
 
 # Create a meddyproject for us to test on. @Christian: TODO: [todo][techdebt] This code is trying to match what the C++ code does to create a valid project. Not guaranteed to remain valid compared to what the code is doing.
 file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir")
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject")
-file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/manifest.json")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject")
+file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/manifest.json")
 
 # Create a bunch of dummy files as an example of important user data that should be untouched.
 file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/HereIsAnExampleTextFileNextToTheProject.txt")
@@ -47,12 +47,12 @@ endif()
 
 # Perform the rest of the test, verifying that the files exist.
 
-if(NOT EXISTS "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles/_meddydata")
+if(NOT EXISTS "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/ftree/MyOtherCoolTextFiles/_meddydata")
   message("Failed. Meddydata directory does not exist.")
   cmake_language(EXIT 4)
 endif()
 
-if(NOT EXISTS "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles/_meddydata/metadata.json")
+if(NOT EXISTS "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/ftree/MyOtherCoolTextFiles/_meddydata/metadata.json")
   message("Failed. Meddydata manifest file does not exist.")
   cmake_language(EXIT 5)
 endif()

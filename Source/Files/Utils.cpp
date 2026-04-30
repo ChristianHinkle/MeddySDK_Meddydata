@@ -82,21 +82,21 @@ boost::filesystem::path MeddySDK::GetPathToMeddydata(
         assert(false);
     }
 
-    boost::filesystem::path dotMeddyprojectPath = MeddySDK::ProjectRootToDotMeddyprojectPath(std::move(meddyprojectRootPath));
+    boost::filesystem::path meddyprojectDirPath = MeddySDK::ProjectRootToMeddyprojectDirPath(std::move(meddyprojectRootPath));
 
-    boost::filesystem::path fileTreeDirPath = DotMeddyprojectDirToFileTreeDir(std::move(dotMeddyprojectPath));
+    boost::filesystem::path fileTreeDirPath = MeddyprojectDirToFileTreeDir(std::move(meddyprojectDirPath));
 
     boost::filesystem::path sourcePathRelativeToFileTree = std::move(fileTreeDirPath.append(std::move(sourcePathRelative)));
 
     return std::move(sourcePathRelativeToFileTree.append(MeddydataDirString));
 }
 
-boost::filesystem::path MeddySDK::DotMeddyprojectDirToFileTreeDir(boost::filesystem::path&& dotMeddyprojectDir)
+boost::filesystem::path MeddySDK::MeddyprojectDirToFileTreeDir(boost::filesystem::path&& meddyprojectDir)
 {
-    return std::move(dotMeddyprojectDir).append(FileTreeDirString);
+    return std::move(meddyprojectDir).append(FileTreeDirString);
 }
 
-boost::filesystem::path MeddySDK::FileTreeDirToDotMeddyprojectDir(boost::filesystem::path&& fileTreeDir)
+boost::filesystem::path MeddySDK::FileTreeDirToMeddyprojectDir(boost::filesystem::path&& fileTreeDir)
 {
     return std::move(fileTreeDir).parent_path();
 }
@@ -124,9 +124,9 @@ MeddySDK::Result_QueryWhetherPathIsFileTreeDir MeddySDK::QueryWhetherPathIsFileT
         return Result_QueryWhetherPathIsFileTreeDir::No_LeafNameDoesNotMatch;
     }
 
-    if (!MeddySDK::IsDotMeddyprojectPath(filesystemPath.parent_path()))
+    if (!MeddySDK::IsMeddyprojectDirPath(filesystemPath.parent_path()))
     {
-        return Result_QueryWhetherPathIsFileTreeDir::No_NotImmediateChildOfDotMeddyproject;
+        return Result_QueryWhetherPathIsFileTreeDir::No_NotImmediateChildOfMeddyprojectDir;
     }
 
     return Result_QueryWhetherPathIsFileTreeDir::Yes;
@@ -144,7 +144,7 @@ MeddySDK::Result_QueryWhetherPathIsValidMeddydata MeddySDK::QueryWhetherPathIsVa
         return Result_QueryWhetherPathIsValidMeddydata::No_NotDirectory;
     }
 
-    // Traverse up the parent directories until we see that ".meddyproject/ftree" exists.
+    // Traverse up the parent directories until we see that "_meddyproject/ftree" exists.
     for (boost::filesystem::path currentDir = std::move(meddydataPath); currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
     {
         if (IsFileTreeDir(currentDir))
@@ -166,7 +166,7 @@ CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherP
         return isValidMeddydataResult;
     }
 
-    // Traverse up the parent directories until we see that ".meddyproject/ftree" exists.
+    // Traverse up the parent directories until we see that "_meddyproject/ftree" exists.
     for (boost::filesystem::path currentDir = meddydataPath; currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
     {
         if (IsFileTreeDir(currentDir))
@@ -175,8 +175,8 @@ CppUtils::ExpectedResult<boost::filesystem::path, MeddySDK::Result_QueryWhetherP
             assert(MeddySDK::IsPathEqualToString(meddydataPath.filename(), MeddydataDirString));
             boost::filesystem::path sourceFilePathRelative = meddydataPath.parent_path().lexically_relative(currentDir);
 
-            boost::filesystem::path dotMeddyprojectDir = FileTreeDirToDotMeddyprojectDir(std::move(currentDir));
-            boost::filesystem::path meddyprojectRootDir = MeddySDK::DotMeddyprojectToProjectRootPath(std::move(dotMeddyprojectDir));
+            boost::filesystem::path meddyprojectDir = FileTreeDirToMeddyprojectDir(std::move(currentDir));
+            boost::filesystem::path meddyprojectRootDir = MeddySDK::MeddyprojectDirToProjectRootPath(std::move(meddyprojectDir));
 
             return std::move(std::move(meddyprojectRootDir).append(sourceFilePathRelative));
         }
@@ -193,9 +193,9 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_TryAddMeddydata> M
     {
         switch (meddyprojectResult.GetError())
         {
-        case MeddySDK::Error_GetOuterDotMeddyprojectPath::PathDoesntExist:
+        case MeddySDK::Error_GetOuterMeddyprojectDirPath::PathDoesntExist:
             return Error_TryAddMeddydata::SourcePathDoesNotExist;
-        case MeddySDK::Error_GetOuterDotMeddyprojectPath::NoDotMeddyprojectFound:
+        case MeddySDK::Error_GetOuterMeddyprojectDirPath::NoMeddyprojectDirFound:
             return Error_TryAddMeddydata::CouldntLocateOuterMeddyproject;
         }
 

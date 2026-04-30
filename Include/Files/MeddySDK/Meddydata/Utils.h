@@ -56,9 +56,9 @@ namespace MeddySDK
     MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path GetPathToMeddydata(
         boost::filesystem::path&& meddyprojectRootPath, boost::filesystem::path&& sourcePathRelative);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path DotMeddyprojectDirToFileTreeDir(boost::filesystem::path&& dotMeddyprojectDir);
+    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddyprojectDirToFileTreeDir(boost::filesystem::path&& meddyprojectDir);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path FileTreeDirToDotMeddyprojectDir(boost::filesystem::path&& fileTreeDir);
+    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path FileTreeDirToMeddyprojectDir(boost::filesystem::path&& fileTreeDir);
 
     MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataPathToMeddydataManifestPath(boost::filesystem::path&& meddydataPath);
 
@@ -68,7 +68,7 @@ namespace MeddySDK
     {
         Yes,
         No_LeafNameDoesNotMatch,
-        No_NotImmediateChildOfDotMeddyproject
+        No_NotImmediateChildOfMeddyprojectDir
     };
 
     MEDDYSDK_MEDDYDATA_EXPORT bool IsFileTreeDir(const boost::filesystem::path& filesystemPath);

@@ -53,11 +53,11 @@ int main(int argc, char** argv)
         return ErrorCodes::FunctionReturnedErrorWhichWasntExpected;
     }
 
-    boost::filesystem::path actualResultDotMeddyprojectPath = testResultActualResult.GetValue();
+    boost::filesystem::path actualResultMeddyprojectDirPath = testResultActualResult.GetValue();
 
-    std::cout << "Actual result path: " << actualResultDotMeddyprojectPath << "." << '\n';
+    std::cout << "Actual result path: " << actualResultMeddyprojectDirPath << "." << '\n';
 
-    const bool didTestPass = actualResultDotMeddyprojectPath == testResultPathExpected;
+    const bool didTestPass = actualResultMeddyprojectDirPath == testResultPathExpected;
     if (!didTestPass)
     {
         std::cout.flush();

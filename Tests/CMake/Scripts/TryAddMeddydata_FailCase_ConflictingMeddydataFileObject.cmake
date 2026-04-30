@@ -18,8 +18,8 @@ file(REMOVE_RECURSE "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST
 
 # Create a meddyproject for us to test on. @Christian: TODO: [todo][techdebt] This code is trying to match what the C++ code does to create a valid project. Not guaranteed to remain valid compared to what the code is doing.
 file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir")
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject")
-file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/manifest.json")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject")
+file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/manifest.json")
 
 # Create a bunch of dummy files as an example of important user data that should be untouched.
 file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/HereIsAnExampleTextFileNextToTheProject.txt")
@@ -29,10 +29,10 @@ file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/My
 file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/MyOtherCoolTextFiles/Hey.txt")
 
 # Create a conflicting file object with where it's going to try creating the meddydata.
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree")
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles")
-file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles/Hey.txt")
-file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/.meddyproject/ftree/MyOtherCoolTextFiles/Hey.txt/_meddydata")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/ftree")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/ftree/MyOtherCoolTextFiles")
+file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/ftree/MyOtherCoolTextFiles/Hey.txt")
+file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/_meddyproject/ftree/MyOtherCoolTextFiles/Hey.txt/_meddydata")
 
 # Invoke the c++ test program.
 execute_process(
