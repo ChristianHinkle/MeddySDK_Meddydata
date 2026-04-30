@@ -274,7 +274,7 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
         return Error_AddMeddydata::FilesystemFailedToCreateManifestFile;
     }
 
-    MeddySDK::Meddydata meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(std::move(manifestFilePath))};
+    MeddySDK::Meddydata meddydata{FromMeddydataPath, MeddydataManifestPathToMeddydataPath(boost::filesystem::path{manifestFilePath})};
 
     // Populate the json file.
     {
