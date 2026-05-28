@@ -95,6 +95,8 @@ namespace MeddySDK
         FilesystemFailedToCreateManifestFile,
     };
 
+    // @Christian: TODO: [todo] Delete this "try" version of the function. It is unused and the new logic for it is handled in MeddyCLI. TODO: Migrate that
+    // code to a new library specifically for handling SDK interaction and user-facing messages.
     MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_TryAddMeddydata> TryAddMeddydata(boost::filesystem::path&& sourceFilesystemPath);
 
     enum class Error_AddMeddydata : unsigned char
