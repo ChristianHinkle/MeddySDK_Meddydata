@@ -231,9 +231,12 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
 {
     boost::filesystem::path pathToMeddydata = GetPathToMeddydata(std::move(meddyproject).GetRootPath(), std::move(sourcePathRelative));
 
+    // TODO: We should ensure that the user's files do not have a file named with our reserved naming for locating meddydata. This should be checked when adding meddydata and
+    // we can see if the new meddydata that we're creating will conflict with the user's file names. This goes for other reserved file names possibly as well.
+
     if (boost::filesystem::exists(pathToMeddydata) && !boost::filesystem::is_directory(pathToMeddydata))
     {
-        // There is a file conflicting with the same name as the directory we wanted to create. TODO: We should traverse up the parent directories and check for conflicting files.
+        // There is a file conflicting with the same name as the directory we wanted to create.
         return Error_AddMeddydata::FilesystemFailedToCreateMeddydata;
     }
 
