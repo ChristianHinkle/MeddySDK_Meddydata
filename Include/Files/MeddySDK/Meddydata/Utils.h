@@ -91,6 +91,7 @@ namespace MeddySDK
     {
         SourcePathDoesNotExist,
         CouldntLocateOuterMeddyproject,
+        SourceFilePathContainsReservedMeddydataDirName,
         FilesystemFailedToCreateMeddydata,
         FilesystemFailedToCreateManifestFile,
     };
@@ -101,6 +102,7 @@ namespace MeddySDK
 
     enum class Error_AddMeddydata : unsigned char
     {
+        SourceFilePathContainsReservedMeddydataDirName,
         FilesystemFailedToCreateMeddydata,
         FilesystemFailedToCreateManifestFile,
     };

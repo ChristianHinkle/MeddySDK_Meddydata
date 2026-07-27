@@ -39,7 +39,7 @@ file(MAKE_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST
 execute_process(
   COMMAND "${MY_TEST_EXECUTABLE_PATH}"
     "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/MyOtherCoolTextFiles/Hey.txt"
-    "3"
+    "4"
   WORKING_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}"
   RESULT_VARIABLE ResultVariable
   COMMAND_ECHO STDOUT

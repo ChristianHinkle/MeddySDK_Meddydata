@@ -38,7 +38,7 @@ file(TOUCH "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/My
 execute_process(
   COMMAND "${MY_TEST_EXECUTABLE_PATH}"
     "${MY_TEST_WORKING_DIRECTORY}/MyTestGeneratedFiles/${MY_TEST_NAME}/MyProjectDir/MyOtherCoolTextFiles/Hey.txt"
-    "2"
+    "3"
   WORKING_DIRECTORY "${MY_TEST_WORKING_DIRECTORY}"
   RESULT_VARIABLE ResultVariable
   COMMAND_ECHO STDOUT

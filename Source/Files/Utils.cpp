@@ -212,6 +212,8 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_TryAddMeddydata> M
     {
         switch (meddydataResult.GetError())
         {
+        case MeddySDK::Error_AddMeddydata::SourceFilePathContainsReservedMeddydataDirName:
+            return MeddySDK::Error_TryAddMeddydata::SourceFilePathContainsReservedMeddydataDirName;
         case MeddySDK::Error_AddMeddydata::FilesystemFailedToCreateMeddydata:
             return Error_TryAddMeddydata::FilesystemFailedToCreateMeddydata;
         case MeddySDK::Error_AddMeddydata::FilesystemFailedToCreateManifestFile:
@@ -229,10 +231,17 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
     MeddySDK::Meddyproject&& meddyproject,
     boost::filesystem::path&& sourcePathRelative)
 {
-    boost::filesystem::path pathToMeddydata = GetPathToMeddydata(std::move(meddyproject).GetRootPath(), std::move(sourcePathRelative));
+    // Ensure that the user's source file path does not contain our reserved meddydata dir name anywhere in it, as that would cause problems or be
+    // a very complex scenario to support.
+    for (boost::filesystem::path currentPath = sourcePathRelative; !currentPath.empty(); currentPath = currentPath.has_parent_path() ? std::move(currentPath).parent_path() : boost::filesystem::path{})
+    {
+        if (MeddySDK::IsPathEqualToString(currentPath.filename(), MeddydataDirString))
+        {
+            return Error_AddMeddydata::SourceFilePathContainsReservedMeddydataDirName;
+        }
+    }
 
-    // TODO: We should ensure that the user's files do not have a file named with our reserved naming for locating meddydata. This should be checked when adding meddydata and
-    // we can see if the new meddydata that we're creating will conflict with the user's file names. This goes for other reserved file names possibly as well.
+    boost::filesystem::path pathToMeddydata = GetPathToMeddydata(std::move(meddyproject).GetRootPath(), std::move(sourcePathRelative));
 
     if (boost::filesystem::exists(pathToMeddydata) && !boost::filesystem::is_directory(pathToMeddydata))
     {
