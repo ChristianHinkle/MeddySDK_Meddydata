@@ -89,6 +89,15 @@ add_test(
   )
 
 add_test(
+  NAME ${MY_BASE_PROJECT_NAME_NAMESPACE}.${MY_BASE_PROJECT_NAME_LEAFNAME}.TryAddMeddydata.FailCase.SourceFilePathContainsReservedMeddydataDirName
+  COMMAND ${CMAKE_COMMAND}
+    "-DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}"
+    "-DMY_TEST_EXECUTABLE_PATH=$<TARGET_FILE:${MY_BASE_PROJECT_NAME_FULL}_TryAddMeddydata>"
+    "-DMY_TEST_WORKING_DIRECTORY=${CMAKE_CURRENT_BINARY_DIR}"
+    -P "${CMAKE_CURRENT_SOURCE_DIR}/CMake/Scripts/TryAddMeddydata_FailCase_SourceFilePathContainsReservedMeddydataDirName.cmake"
+  )
+
+add_test(
   NAME ${MY_BASE_PROJECT_NAME_NAMESPACE}.${MY_BASE_PROJECT_NAME_LEAFNAME}.TryAddMeddydata.FailCase.ConflictingMeddydataFileObject
   COMMAND ${CMAKE_COMMAND}
     "-DCMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}"

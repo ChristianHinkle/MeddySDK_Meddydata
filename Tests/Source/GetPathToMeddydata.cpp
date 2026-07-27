@@ -13,6 +13,7 @@ namespace ErrorCodes
     constexpr int FunctionReturnedErrorWhichWasntExpected = 3;
 }
 
+// TODO: [todo][techdebt] Review this logic and make sure that if the test expects an error but the operation succeeded, then an error code `ActualVsExpectedResultMismatch` is returned.
 int main(int argc, char** argv)
 {
     if (argc != 3)

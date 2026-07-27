@@ -79,6 +79,12 @@ int main(int argc, char** argv)
 
     std::cout << "Actual result succeeded." << '\n';
 
+    if (testResultExpectedError.has_value())
+    {
+        // Returned a success, which wasn't expected by the test.
+        return ErrorCodes::ActualVsExpectedResultMismatch;
+    }
+
     std::cout.flush();
     return 0;
 }
