@@ -17,7 +17,6 @@ project(${MY_BASE_PROJECT_NAME_FULL}_Tests
   )
 
 find_package(MeddySDK_Meddyproject CONFIG REQUIRED COMPONENTS Static)
-find_package(Boost 0 CONFIG REQUIRED COMPONENTS filesystem)
 
 # Note that we do not "find package" for our parent project. We don't need to since we are built in the same
 # cmake invocation as the it. That means we're being processed during the same configuration step as them, which
@@ -31,7 +30,6 @@ target_sources(${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata PRIVATE "${CMAKE_
 target_link_libraries(${MY_BASE_PROJECT_NAME_FULL}_GetPathToMeddydata
   PRIVATE
     ${MY_BASE_PROJECT_NAME_NAMESPACE}::${MY_BASE_PROJECT_NAME_LEAFNAME}::Static
-    Boost::filesystem
   )
 
 add_test(
@@ -49,7 +47,6 @@ target_sources(${MY_BASE_PROJECT_NAME_FULL}_TryAddMeddydata PRIVATE "${CMAKE_CUR
 target_link_libraries(${MY_BASE_PROJECT_NAME_FULL}_TryAddMeddydata
   PRIVATE
     ${MY_BASE_PROJECT_NAME_NAMESPACE}::${MY_BASE_PROJECT_NAME_LEAFNAME}::Static
-    Boost::filesystem
   )
 
 add_test(

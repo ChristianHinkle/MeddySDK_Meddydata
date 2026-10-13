@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
     std::cout << '\n';
 
-    boost::filesystem::path inputPath = boost::filesystem::path{inputPathString}.lexically_normal();
+    std::filesystem::path inputPath = std::filesystem::path{inputPathString}.lexically_normal();
 
     std::cout << "Input path: " << inputPath << "." << '\n';
 
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     std::cout << '\n';
 
     CppUtils::ExpectedResult testResultActualResult =
-        MeddySDK::TryAddMeddydata(boost::filesystem::path{inputPath});
+        MeddySDK::TryAddMeddydata(std::filesystem::path{inputPath});
 
     if (testResultActualResult.IsError())
     {

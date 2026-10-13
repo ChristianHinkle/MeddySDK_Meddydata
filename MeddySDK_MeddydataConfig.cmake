@@ -16,8 +16,6 @@ find_dependency(RapidJsonCmakeInterface CONFIG)
 find_dependency(MeddySDK_Meddyproject CONFIG COMPONENTS Include)
 find_dependency(MeddySDK_Meddyproject CONFIG COMPONENTS Static)
 
-find_dependency(Boost CONFIG COMPONENTS filesystem)
-
 find_dependency(CppUtils_StdReimpl CONFIG COMPONENTS Include)
 find_dependency(CppUtils_Core CONFIG COMPONENTS Include)
 find_dependency(CppUtils_Misc CONFIG COMPONENTS Include)

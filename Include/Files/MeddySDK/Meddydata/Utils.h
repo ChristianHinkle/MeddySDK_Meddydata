@@ -3,7 +3,7 @@
 #pragma once
 
 #include <MeddySDK_Meddydata_Export.h>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <CppUtils/Core/ExpectedResult.h>
 #include <MeddySDK/Meddydata/Meddydata.h>
 #include <MeddySDK/Meddyproject/Meddyproject.h>
@@ -42,7 +42,7 @@ namespace MeddySDK
         NoMeddydata_NotDirectory
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_GetMeddydata> GetMeddydata(boost::filesystem::path&& sourceFilesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_GetMeddydata> GetMeddydata(std::filesystem::path&& sourceFilesystemPath);
 
     enum class Error_GetPathToMeddydata : unsigned char
     {
@@ -50,19 +50,19 @@ namespace MeddySDK
         CouldntLocateOuterMeddyproject
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<boost::filesystem::path, Error_GetPathToMeddydata> GetPathToMeddydata(
-        boost::filesystem::path&& sourceFilesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<std::filesystem::path, Error_GetPathToMeddydata> GetPathToMeddydata(
+        std::filesystem::path&& sourceFilesystemPath);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path GetPathToMeddydata(
-        boost::filesystem::path&& meddyprojectRootPath, boost::filesystem::path&& sourcePathRelative);
+    MEDDYSDK_MEDDYDATA_EXPORT std::filesystem::path GetPathToMeddydata(
+        std::filesystem::path&& meddyprojectRootPath, std::filesystem::path&& sourcePathRelative);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddyprojectDirToFileTreeDir(boost::filesystem::path&& meddyprojectDir);
+    MEDDYSDK_MEDDYDATA_EXPORT std::filesystem::path MeddyprojectDirToFileTreeDir(std::filesystem::path&& meddyprojectDir);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path FileTreeDirToMeddyprojectDir(boost::filesystem::path&& fileTreeDir);
+    MEDDYSDK_MEDDYDATA_EXPORT std::filesystem::path FileTreeDirToMeddyprojectDir(std::filesystem::path&& fileTreeDir);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataPathToMeddydataManifestPath(boost::filesystem::path&& meddydataPath);
+    MEDDYSDK_MEDDYDATA_EXPORT std::filesystem::path MeddydataPathToMeddydataManifestPath(std::filesystem::path&& meddydataPath);
 
-    MEDDYSDK_MEDDYDATA_EXPORT boost::filesystem::path MeddydataManifestPathToMeddydataPath(boost::filesystem::path&& manifestMeddydataPath);
+    MEDDYSDK_MEDDYDATA_EXPORT std::filesystem::path MeddydataManifestPathToMeddydataPath(std::filesystem::path&& manifestMeddydataPath);
 
     enum class Result_QueryWhetherPathIsFileTreeDir : unsigned char
     {
@@ -71,8 +71,8 @@ namespace MeddySDK
         No_NotImmediateChildOfMeddyprojectDir
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT bool IsFileTreeDir(const boost::filesystem::path& filesystemPath);
-    MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsFileTreeDir QueryWhetherPathIsFileTreeDir(const boost::filesystem::path& filesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT bool IsFileTreeDir(const std::filesystem::path& filesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsFileTreeDir QueryWhetherPathIsFileTreeDir(const std::filesystem::path& filesystemPath);
 
     enum class Result_QueryWhetherPathIsValidMeddydata : unsigned char
     {
@@ -82,10 +82,10 @@ namespace MeddySDK
         No_NotUnderMeddyprojectFileTreeDir
     };
 
-    MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsValidMeddydata QueryWhetherPathIsValidMeddydata(boost::filesystem::path&& meddydataPath);
+    MEDDYSDK_MEDDYDATA_EXPORT Result_QueryWhetherPathIsValidMeddydata QueryWhetherPathIsValidMeddydata(std::filesystem::path&& meddydataPath);
 
-    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<boost::filesystem::path, Result_QueryWhetherPathIsValidMeddydata> GetSourceFilePathFromMeddydataPath(
-        const boost::filesystem::path& meddydataPath);
+    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<std::filesystem::path, Result_QueryWhetherPathIsValidMeddydata> GetSourceFilePathFromMeddydataPath(
+        const std::filesystem::path& meddydataPath);
 
     enum class Error_TryAddMeddydata : unsigned char
     {
@@ -98,7 +98,7 @@ namespace MeddySDK
 
     // @Christian: TODO: [todo] Delete this "try" version of the function. It is unused and the new logic for it is handled in MeddyCLI. TODO: Migrate that
     // code to a new library specifically for handling SDK interaction and user-facing messages.
-    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_TryAddMeddydata> TryAddMeddydata(boost::filesystem::path&& sourceFilesystemPath);
+    MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_TryAddMeddydata> TryAddMeddydata(std::filesystem::path&& sourceFilesystemPath);
 
     enum class Error_AddMeddydata : unsigned char
     {
@@ -109,7 +109,7 @@ namespace MeddySDK
 
     MEDDYSDK_MEDDYDATA_EXPORT CppUtils::ExpectedResult<MeddySDK::Meddydata, Error_AddMeddydata> AddMeddydata(
         MeddySDK::Meddyproject&& meddyproject,
-        boost::filesystem::path&& sourcePathRelative);
+        std::filesystem::path&& sourcePathRelative);
 
     template <class Encoding, class Allocator, class StackAllocator>
     void AppendNewMetadataJson(const MeddySDK::Meddydata& meddydata, rapidjson::GenericDocument<Encoding, Allocator, StackAllocator>& metadataJsonDocument);

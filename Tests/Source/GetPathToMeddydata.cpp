@@ -31,8 +31,8 @@ int main(int argc, char** argv)
 
     std::cout << '\n';
 
-    boost::filesystem::path inputPath = boost::filesystem::path{inputPathString}.lexically_normal();
-    boost::filesystem::path testResultPathExpected = boost::filesystem::path{testResultExpectedString}.lexically_normal();
+    std::filesystem::path inputPath = std::filesystem::path{inputPathString}.lexically_normal();
+    std::filesystem::path testResultPathExpected = std::filesystem::path{testResultExpectedString}.lexically_normal();
 
     std::cout << "Input path: " << inputPath << "." << '\n';
     std::cout << "Expected result: " << testResultPathExpected << "." << '\n';
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
     std::cout << '\n';
 
     CppUtils::ExpectedResult testResultActualResult =
-        MeddySDK::GetPathToMeddydata(boost::filesystem::path{inputPath});
+        MeddySDK::GetPathToMeddydata(std::filesystem::path{inputPath});
 
     if (testResultActualResult.IsError())
     {
@@ -54,7 +54,7 @@ int main(int argc, char** argv)
         return ErrorCodes::FunctionReturnedErrorWhichWasntExpected;
     }
 
-    boost::filesystem::path actualResultMeddyprojectDirPath = testResultActualResult.GetValue();
+    std::filesystem::path actualResultMeddyprojectDirPath = testResultActualResult.GetValue();
 
     std::cout << "Actual result path: " << actualResultMeddyprojectDirPath << "." << '\n';
 

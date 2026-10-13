@@ -3,7 +3,7 @@
 #pragma once
 
 #include <MeddySDK_Meddyproject_Export.h>
-#include <boost/filesystem/path.hpp>
+#include <filesystem>
 #include <utility>
 
 namespace MeddySDK
@@ -21,16 +21,16 @@ namespace MeddySDK
     struct MEDDYSDK_MEDDYPROJECT_EXPORT Meddydata
     {
     public:
-        explicit Meddydata(MeddydataConstructor_FromSourcePath, boost::filesystem::path&& sourceFilesystemPath);
-        explicit Meddydata(MeddydataConstructor_FromMeddydataPath, boost::filesystem::path&& meddydataFilesystemPath);
+        explicit Meddydata(MeddydataConstructor_FromSourcePath, std::filesystem::path&& sourceFilesystemPath);
+        explicit Meddydata(MeddydataConstructor_FromMeddydataPath, std::filesystem::path&& meddydataFilesystemPath);
 
     public:
-        const boost::filesystem::path& GetSourceFilesystemPath() const &;
-        boost::filesystem::path GetSourceFilesystemPath() &&;
-        boost::filesystem::path GetMeddydataPath() const &;
-        boost::filesystem::path GetMeddydataPath() &&;
+        const std::filesystem::path& GetSourceFilesystemPath() const &;
+        std::filesystem::path GetSourceFilesystemPath() &&;
+        std::filesystem::path GetMeddydataPath() const &;
+        std::filesystem::path GetMeddydataPath() &&;
 
     private:
-        boost::filesystem::path SourceFilesystemPath;
+        std::filesystem::path SourceFilesystemPath;
     };
 }

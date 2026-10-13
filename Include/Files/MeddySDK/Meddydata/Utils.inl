@@ -7,7 +7,7 @@
 #include <rapidjson/document.h>
 #include <utility>
 #include <MeddySDK/Meddydata/Meddydata.h>
-#include <boost/filesystem/operations.hpp>
+#include <filesystem>
 #include <format>
 #include <chrono>
 #include <CppUtils/Misc/DateTime.h>
@@ -17,7 +17,7 @@ void MeddySDK::AppendNewMetadataJson(const MeddySDK::Meddydata& meddydata, rapid
 {
     assert(metadataJsonDocument.IsObject()); // The root must be an object.
 
-    boost::filesystem::path sourcePathname = meddydata.GetSourceFilesystemPath();
+    std::filesystem::path sourcePathname = meddydata.GetSourceFilesystemPath();
 
     // @Christian: TODO: [todo][dam] This DCMI metadata should probably be handled by the DAM library.
 
@@ -32,11 +32,12 @@ void MeddySDK::AppendNewMetadataJson(const MeddySDK::Meddydata& meddydata, rapid
     {
         const std::chrono::zoned_time dateCreatedZonedTime = [&]()
         {
-            const std::time_t creationTime = boost::filesystem::creation_time(sourcePathname);
+            // TODO: [todo][regression] Use Boost.Filesystem again for getting file creation time, after we move this code to the DAM library.
+            const std::time_t creationTime{/*boost::filesystem::creation_time(sourcePathname)*/};
             std::chrono::time_point creationTimePoint = std::chrono::system_clock::from_time_t(creationTime);
 
             // Truncate any precision after the whole number of seconds. TODO: [todo] We may want to change this to be as precise as
-            // possible, but `boost::filesystem::creation_time` is not returning us the full precision value anyways, so unless
+            // possible, but `std::filesystem::creation_time` is not returning us the full precision value anyways, so unless
             // we want to address that, we can just keep it like this. Storing only the whole numbers look more user-friendly as well so maybe
             // we'll end up wanting it this way anyway. It depends on the use cases.
             std::chrono::time_point creationTimePointInDesiredDuration =
