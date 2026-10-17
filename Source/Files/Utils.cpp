@@ -145,7 +145,8 @@ MeddySDK::Result_QueryWhetherPathIsValidMeddydata MeddySDK::QueryWhetherPathIsVa
     }
 
     // Traverse up the parent directories until we see that "_meddyproject/ftree" exists.
-    for (std::filesystem::path currentDir = std::move(meddydataPath); currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
+    // TODO: [todo][techdebt] Fix loop condition to also allow the iteration on the root directory if it gets to that point.
+    for (std::filesystem::path currentDir = std::move(meddydataPath); !CppUtils::IsRootPath(currentDir); currentDir = std::move(currentDir).parent_path())
     {
         if (IsFileTreeDir(currentDir))
         {
@@ -167,7 +168,8 @@ CppUtils::ExpectedResult<std::filesystem::path, MeddySDK::Result_QueryWhetherPat
     }
 
     // Traverse up the parent directories until we see that "_meddyproject/ftree" exists.
-    for (std::filesystem::path currentDir = meddydataPath; currentDir.has_parent_path(); currentDir = std::move(currentDir).parent_path())
+    // TODO: [todo][techdebt] Fix loop condition to also allow the iteration on the root directory if it gets to that point.
+    for (std::filesystem::path currentDir = meddydataPath; !CppUtils::IsRootPath(currentDir); currentDir = std::move(currentDir).parent_path())
     {
         if (IsFileTreeDir(currentDir))
         {
