@@ -10,7 +10,7 @@ For a superproject with all components MeddySDK has to offer, see [MeddySDK](htt
 MeddySDK_Meddydata
 - [MeddySDK_Meddyproject](https://github.com/ChristianHinkle/MeddySDK_Meddyproject)
 - ~~[Boost.Filesystem](https://github.com/boostorg/filesystem)~~
-    - Now migrated back to `std::filesystem`.
+    - Now using `std::filesystem` instead.
 - [RapidJSON](https://github.com/Tencent/rapidjson)
 - [CppUtils_Core](https://github.com/ChristianHinkle/CppUtils_Core)
 - [CppUtils_Misc](https://github.com/ChristianHinkle/CppUtils_Misc)

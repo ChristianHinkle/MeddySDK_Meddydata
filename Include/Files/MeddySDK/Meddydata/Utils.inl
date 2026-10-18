@@ -5,20 +5,13 @@
 #include <MeddySDK/Meddydata/Utils.h>
 
 #include <rapidjson/document.h>
-
-// See TODO below.
-
-//#include <MeddySDK/DAM/Utils.h>
+#include <cassert>
 
 template <class Encoding, class Allocator, class StackAllocator>
 void MeddySDK::AppendNewMetadataJson(const MeddySDK::Meddydata& meddydata, rapidjson::GenericDocument<Encoding, Allocator, StackAllocator>& metadataJsonDocument)
 {
     assert(metadataJsonDocument.IsObject()); // The root must be an object.
 
-    // TODO: [todo][deps] Solidify the design more to connect this together. We can't have Meddydata library depend on DAM because that
-    // would be circular, and we shouldn't anyway because that would be a bad design. Figure out how we want this metadata.json file to work. One
-    // idea: MeddySDK_Meddydata just creates an a purely empty file of configurable name, the user of this SDK chooses the file name and
-    // tells MeddySDK_DAM to populate it.
-
-    //AppendDcmiMetadataJson(meddydata, metadataJsonDocument);
+    // Populate the metadata.json with any essential information for Meddy here. Or maybe we should make a separate file for this. Maybe there
+    // should be a separate file named "manifest.json" or something like that. And then "metadata.json" could be 100% owned by MeddySDK_DAM library.
 }

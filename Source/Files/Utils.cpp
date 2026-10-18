@@ -298,7 +298,7 @@ CppUtils::ExpectedResult<MeddySDK::Meddydata, MeddySDK::Error_AddMeddydata> Medd
         AppendNewMetadataJson(meddydata, jsonDocument);
 
         // Serialize this json document to the file.
-        const bool didSaveToFile = MeddySDK::SaveJsonDocumentToFile(CppUtils::StdPathStringView{manifestFilePath.native()}, jsonDocument);
+        const bool didSaveToFile = MeddySDK::SaveJsonDocumentToFile(CppUtils::GetStringViewFromPath(manifestFilePath), jsonDocument);
         assert(didSaveToFile);
     }
 
